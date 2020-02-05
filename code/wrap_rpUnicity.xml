@@ -5,10 +5,13 @@
 		<regex match="WARNING:" level="warning" />
 	</stdio>
   <command detect_errors="exit_code"><![CDATA[
-		'$__tool_directory__/tool_rpUnicity.py' -input '$input' -output '$output'
+		'$__tool_directory__/tool_rpUnicity.py' -input '$input' -output '$output' -server_url '$adv.server_url'
   ]]></command>
   <inputs>
     <param name="input" type="data" format="tar" label="rpSBML tar input" />
+    <section name="adv" title="Advanced Options" expanded="false">
+			<param name="server_url" type="text" value="http://rpunicity_rest-dev:8888/REST" label="Server URL" />
+		</section>
   </inputs>
   <outputs>
     <param name="output" type="data" format="tar" label="rpSBML tar output" />
