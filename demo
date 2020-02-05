@@ -1,0 +1,4 @@
+#!/bin/sh
+
+
+./rpUnicity -inputTar data/input.tar -outputTar data/output.tar
