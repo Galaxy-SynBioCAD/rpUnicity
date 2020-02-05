@@ -1,0 +1,21 @@
+<tool id="rpUnicity" name="Unicity" version="1.0">
+  <description>Remove duplicate pathways</description>
+  <stdio>
+		<regex match="ERROR:" level="error" />
+		<regex match="WARNING:" level="warning" />
+	</stdio>
+  <command detect_errors="exit_code"><![CDATA[
+		'$__tool_directory__/tool_rpUnicity.py' -input '$input' -output '$output'
+  ]]></command>
+  <inputs>
+    <param name="input" type="data" format="tar" label="rpSBML tar input" />
+  </inputs>
+  <outputs>
+    <param name="output" type="data" format="tar" label="rpSBML tar output" />
+  </outputs>
+  <help>
+   This is the help section. Should really write something usefull here :)
+  </help>
+  <citations>
+  </citations>
+</tool>

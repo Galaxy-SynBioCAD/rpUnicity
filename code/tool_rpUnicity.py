@@ -9,6 +9,7 @@ import tempfile
 import tarfile
 import glob
 from shutil import copy2
+import argparse
 
 
 # Python code t get difference of two lists
@@ -21,18 +22,22 @@ PRINT = False
 
 
 def main (args):
-    """Usage: rpUnicity input.tar output.tar
+    """Usage: -inputTar rpUnicity input.tar -outputTar output.tar
     """
 
+    parser = argparse.ArgumentParser('Python wrapper to parse rpUnicity to generate an archive containing unique pathways collection')
+    parser.add_argument('-inputTar', type=str)
+    parser.add_argument('-outputTar', type=str)
+    params = parser.parse_args()
 
-    if len(args) != 3:
-       print("\n" + "Usage: rpUnicity input.tar output.tar" + "\n")
-       return 1
+    # if len(args) != 3:
+    #    print("\n" + "Usage: rpUnicity -inputTar input.tar -outputTar output.tar" + "\n")
+    #    return 1
+    #
+    # inputTar = args[1]
+    # outputTar = args[2]
 
-    inputTar = args[1]
-    outputTar = args[2]
-
-    deduplicate(inputTar, outputTar)
+    deduplicate(params.inputTar, params.outputTar)
 
 
 def deduplicate(inputTar, outputTar):
