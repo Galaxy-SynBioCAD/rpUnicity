@@ -1,4 +1,4 @@
-<tool id="rpUnicity" name="Unicity" version="1.0">
+<tool id="rpUnicity" name="RP Unicity" version="1.0">
   <description>Remove duplicate pathways</description>
   <stdio>
 		<regex match="ERROR:" level="error" />
