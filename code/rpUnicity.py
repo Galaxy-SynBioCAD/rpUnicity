@@ -5,6 +5,10 @@ import sys
 import os.path
 from libsbml import readSBML
 import rpSBML
+import tempfile
+import tarfile
+import glob
+from shutil import copy2
 
 
 # Python code t get difference of two lists
@@ -17,26 +21,50 @@ PRINT = False
 
 
 def main (args):
-    """Usage: rpUnicity <dirname>
+    """Usage: rpUnicity input.tar output.tar
     """
 
 
-    if len(args) != 2:
-       print("\n" + "Usage: rpUnicity <dirname>" + "\n")
+    if len(args) != 3:
+       print("\n" + "Usage: rpUnicity input.tar output.tar" + "\n")
        return 1
 
-    path = args[1]
+    inputTar = args[1]
+    outputTar = args[2]
+
+    deduplicate(inputTar, outputTar)
+
+
+def deduplicate(inputTar, outputTar):
+
     files = []
 
-    # for f_or_d in os.listdir(path):
-    #     if os.path.isfile(f_or_d) and '.xml' in f_or_d:
-    #         files.append(os.path.join(r, file))
+    with tempfile.TemporaryDirectory() as tmpOutputFolder:
+        with tempfile.TemporaryDirectory() as tmpInputFolder:
 
-    # r=root, d=directories, f = files
-    for r, d, f in os.walk(path):
-        for file in f:
-            if '.xml' in file:
-                files.append(os.path.join(r, file))
+            tar = tarfile.open(inputTar, mode='r')
+            tar.extractall(path=tmpInputFolder)
+            tar.close()
+
+            unique_files = _dedup_core(glob.glob(tmpInputFolder+'/*'))
+
+            for file in unique_files:
+                copy2(file, tmpOutputFolder)
+
+            with tarfile.open(outputTar, "w:gz") as tar:
+                tar.add(tmpOutputFolder, arcname=os.path.sep)
+
+            # with tarfile.open(fileobj=outputTar, mode='w:xz') as ot:
+            #     for file in glob.glob(tmpOutputFolder+'/*'):
+            #         info = tarfile.TarInfo(file)
+            #         info.size = os.path.getsize(file)
+            #         print(file, info)
+            #         ot.addfile(tarinfo=info, fileobj=open(file, 'rb'))
+
+    return 0
+
+
+def _dedup_core(files):
 
     d_pathways = {}
 
@@ -129,14 +157,11 @@ def main (args):
             unique_pathways += [pathway]
             unique_files += [file]
 
-    # print(files)
-    # print()
-    print(unique_files)
-    # print()
-    # print(Diff(files,unique_files))
 
 
-    return 0
+
+    return unique_files
+
 
 
 def PrintInfos1(filename, level, version, idString, id, model):
