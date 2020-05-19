@@ -51,10 +51,7 @@ def deduplicate(inputTar, outputTar):
             tar.extractall(path=tmpInputFolder)
             tar.close()
 
-            unique_files = _dedup_core(glob.glob(tmpInputFolder+'/*'))
-
-            for file in unique_files:
-                copy2(file, tmpOutputFolder)
+            detect_and_copy_unique_pathways(tmpInputFolder, tmpOutputFolder)
 
             with tarfile.open(outputTar, "w:gz") as tar:
                 tar.add(tmpOutputFolder, arcname=os.path.sep)
@@ -69,7 +66,13 @@ def deduplicate(inputTar, outputTar):
     return 0
 
 
-def _dedup_core(files):
+def detect_and_copy_unique_pathways(tmpInputFolder, tmpOutputFolder):
+    unique_files = list_unique_pathways(glob.glob(tmpInputFolder+'/*'))
+    for file in unique_files:
+        copy2(file, tmpOutputFolder)
+
+
+def list_unique_pathways(files):
 
     d_pathways = {}
 
