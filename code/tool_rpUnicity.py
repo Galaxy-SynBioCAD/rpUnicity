@@ -71,6 +71,10 @@ def detect_and_copy_unique_pathways(tmpInputFolder, tmpOutputFolder):
     for file in unique_files:
         copy2(file, tmpOutputFolder)
 
+def search_key(keys, dict):
+    for key in keys:
+        if key in dict:
+            return key
 
 def list_unique_pathways(files):
 
@@ -130,8 +134,10 @@ def list_unique_pathways(files):
         # print()
 
         # Pathways dict
+        # Pathways dict
         d_reactions = {}
 
+        keys = ['inchikey', 'inchi', 'smiles']
         # Select Reactions already loaded (w/o Sink one then)
         for reaction in reactions:
 
@@ -140,15 +146,23 @@ def list_unique_pathways(files):
             # Fill the reactants in a dedicated dict
             d_reactants = {}
             for reactant in model.getReaction(reaction).getListOfReactants():#inchikey / inchi sinon miriam sinon IDs
-                # Il faut enregistrer toutes les infos (inchi, miriam, ids)
-                d_reactants[species[reactant.getSpecies()]['inchikey']] = reactant.getStoichiometry()
+                # Il faut enregistrer toutes les infos (inchi, smiles, id)
+                key = search_key(keys, species[reactant.getSpecies()])
+                if key: key = species[reactant.getSpecies()][key]
+                else:
+                    key = reactant.getSpecies()
+                d_reactants[key] = reactant.getStoichiometry()
             # Put all reactants dicts in reactions dict for which smiles notations are the keys
             d_reactions[reactions[reaction]['smiles']]['Reactants'] = d_reactants
 
             # Fill the products in a dedicated dict
             d_products = {}
             for product in model.getReaction(reaction).getListOfProducts():
-                d_products[species[product.getSpecies()]['inchikey']] = product.getStoichiometry()
+                key = search_key(keys, species[product.getSpecies()])
+                if key: key = species[product.getSpecies()][key]
+                else:
+                    key = product.getSpecies()
+                d_products[key] = product.getStoichiometry()
             # Put all products dicts in reactions dict for which smiles notations are the keys
             d_reactions[reactions[reaction]['smiles']]['Products'] = d_products
 
